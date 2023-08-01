@@ -1,8 +1,8 @@
 from rest_framework import generics
-from rest_framework.views import Response
 from .models import Product
 from .serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
+from .permissions import IsProductOwnerOrReadOnly
 
 class ProductList(generics.ListAPIView):
     queryset = Product.objects.all()
@@ -23,3 +23,4 @@ class ProductCreate(generics.CreateAPIView):
 class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsProductOwnerOrReadOnly]
