@@ -8,7 +8,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=15, decimal_places=2, 
                                 validators=[MinValueValidator(0)])
     quantity = models.IntegerField(validators=[MinValueValidator(0)])
-    image = models.ImageField(unique=True, upload_to="media/Products-Avatar/", blank=True)
+    image = models.ImageField(unique=False, upload_to="media/Products-Avatar/", blank=True, null=True)
     
     def __str__(self) -> str:
         return self.name

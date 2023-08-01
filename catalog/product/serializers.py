@@ -4,4 +4,5 @@ from .models import Product
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ('owner',) # We don't need to pass or show this

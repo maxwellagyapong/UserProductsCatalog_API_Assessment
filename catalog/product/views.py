@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.views import Response
 from .models import Product
 from .serializers import ProductSerializer
+from rest_framework.permissions import IsAuthenticated
 
 class ProductList(generics.ListAPIView):
     queryset = Product.objects.all()
@@ -9,9 +10,15 @@ class ProductList(generics.ListAPIView):
     
     
 class ProductCreate(generics.CreateAPIView):
-    queryset = Product.objects.all()
+    # queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
     
+    def perform_create(self, serializer):
+        owner = self.request.user # Get the requested user
+        
+        serializer.save(owner=owner) # Use the requested user as the owner of the product when saving it
+        
     
 class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
