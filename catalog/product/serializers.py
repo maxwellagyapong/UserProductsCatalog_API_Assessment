@@ -5,4 +5,4 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         # fields = '__all__'
-        exclude = ('owner',) # We don't need to pass or show this
+        exclude = ('owner',)
