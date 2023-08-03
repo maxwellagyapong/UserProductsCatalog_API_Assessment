@@ -5,7 +5,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-@api_view(["POST"])
+@api_view(["POST",])
 def register_view(request):
     
     if request.method == "POST":
