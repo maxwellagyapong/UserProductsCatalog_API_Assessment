@@ -10,11 +10,21 @@ def register_view(request):
     
     if request.method == "POST":
         serializer = RegisterSerializer(data=request.data)
+        
+        data = {}
+        
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+            account = serializer.save()
+            
+            data['response'] = "Registration successful!"
+            data['username'] = account.username
+            data['email'] = account.email
+            
+            return Response(data)
+        else:    
+            data = serializer.errors
+            
+        return Response(data)
 
 @api_view(["POST",])
 @permission_classes([IsAuthenticated]) 
