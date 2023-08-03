@@ -19,7 +19,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         if password != password2:
             raise serializers.ValidationError({"Error": "P1 and P2 must be the same!"})
         
-        if User.objects.filter(email=self.validated_data.get('email')).exists:
+        if User.objects.filter(email=self.validated_data.get('email')).exists():
             raise serializers.ValidationError({"Error": "Email already exists!"})
         
         account = User(email=self.validated_data.get("email"), 
