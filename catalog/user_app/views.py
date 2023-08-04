@@ -30,18 +30,25 @@ class RegistrationView(generics.CreateAPIView):
 			}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
 			try:
-				getPassword = request.data["password"]
-				password_length = len(getPassword)
+				password = request.data["password"]
+				password2 = request.data["password2"]
 				if "@" not in email or ".com" not in email:
 					return Response({
 						"status": status.HTTP_400_BAD_REQUEST,
 						"message": "Invalid email address!",
 					}, status=status.HTTP_400_BAD_REQUEST)
-				elif password_length < 8:
+     
+				elif len(password) < 8:
 					return Response({
 						"status": status.HTTP_400_BAD_REQUEST,
 						"message": "Password must contain at least 8 characters!",
 					}, status=status.HTTP_400_BAD_REQUEST)
+     
+				elif password != password2:
+					return Response({
+						"status": status.HTTP_400_BAD_REQUEST,
+						"message": "password and password2 must be the same!",
+					}, status=status.HTTP_400_BAD_REQUEST)					
 				else:
 					
 					user = User.objects.create(
@@ -49,14 +56,14 @@ class RegistrationView(generics.CreateAPIView):
                             last_name=validated_data["last_name"],
 							email=email
 						)
-					user.set_password(getPassword)
+					user.set_password(password)
 					user.userId = generate_userId()
 					user.save()
 										
 					return Response({
+                        "message": "Account registration was successful.",
 						"status": status.HTTP_201_CREATED,
 						"email": user.email,
-						"message": "Account registration was successful."
 						
 					}, status=status.HTTP_201_CREATED)
 					
@@ -82,9 +89,10 @@ class LoginView(generics.GenericAPIView):
 		user = auth.authenticate(email=email, password=password)
 		if user:
 			token = RefreshToken.for_user(user).access_token
-			serializer = UserLoginSerializer(user)
-			print("LOGIN SUCCESFUL")
+			# serializer = UserLoginSerializer(user)
+	
 			data = {
+                'message': 'Login Successful',
 				'status': status.HTTP_200_OK,
 				'userId': user.userId,
 				'token': str(token),
