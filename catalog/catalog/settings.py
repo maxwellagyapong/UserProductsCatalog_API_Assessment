@@ -40,11 +40,13 @@ INSTALLED_APPS = [
     
     # local apps
     'product',
+    'user_app',
     
     # third-party apps
     'rest_framework',
-    'rest_framework.authtoken',
 ]
+
+AUTH_USER_MODEL = "user_app.User"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -135,6 +137,6 @@ REST_FRAMEWORK = {
     # ],
     
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }

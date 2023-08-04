@@ -1,34 +1,23 @@
-from django.contrib.auth.models import User
+from . import models
 from rest_framework import serializers
 
-class RegisterSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password', 'password2']
-        extra_kwargs = {
-            'password': {'write_only': True} 
-        }
-        
-    def save(self, **kwargs):
-        
-        password = self.validated_data.get('password')
-        password2 = self.validated_data.get('password2')
-        
-        if password != password2:
-            raise serializers.ValidationError({"Error": "P1 and P2 must be the same!"})
-        
-        if User.objects.filter(email=self.validated_data.get('email')).exists():
-            raise serializers.ValidationError({"Error": "Email already exists!"})
-        
-        account = User(email=self.validated_data.get("email"), 
-                       username=self.validated_data.get('username'),)
-        account.set_password(password)
-        
-        account.save()
-        
-        return account
-        
-        
-        
+class UserSerializer(serializers.ModelSerializer):
+	first_name = serializers.CharField(max_length=200)
+	last_name = serializers.CharField(max_length=200)
+	password = serializers.CharField(style={'input_type': 'password'},
+		max_length=65, min_length=8, write_only=True)
+	email = serializers.EmailField(max_length=255, min_length=4)
+ 
+	class Meta:
+		model= models.User
+		fields = ['first_name', 'last_name', 'email', 'password']
+		extra_kwargs = {'password': {'write_only': True}}
+
+
+class UserLoginSerializer(serializers.ModelSerializer):
+	password = serializers.CharField(max_length=65, min_length=8)
+	email = serializers.EmailField(max_length=255, min_length=4)
+
+	class Meta:
+		model = models.User
+		fields = ["email", "password"]

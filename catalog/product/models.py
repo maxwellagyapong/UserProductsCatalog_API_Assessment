@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.contrib.auth.models import User
+from user_app.models import User
 
 class Product(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
