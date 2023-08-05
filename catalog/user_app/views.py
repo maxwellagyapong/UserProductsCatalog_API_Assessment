@@ -89,12 +89,10 @@ class LoginView(generics.GenericAPIView):
 		user = auth.authenticate(email=email, password=password)
 		if user:
 			token = RefreshToken.for_user(user).access_token
-			# serializer = UserLoginSerializer(user)
 	
 			data = {
                 'message': 'Login Successful',
 				'status': status.HTTP_200_OK,
-				'userId': user.userId,
 				'token': str(token),
 			}
 			return Response(data, status=status.HTTP_200_OK)
