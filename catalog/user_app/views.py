@@ -57,7 +57,7 @@ class RegistrationView(generics.CreateAPIView):
 							email=email
 						)
 					user.set_password(password)
-					user.userId = generate_userId()
+					# user.userId = generate_userId()
 					user.save()
 										
 					return Response({

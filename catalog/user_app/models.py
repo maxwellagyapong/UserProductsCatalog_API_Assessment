@@ -42,7 +42,7 @@ class User(AbstractBaseUser):
 	# =====================================
 	first_name                      = models.CharField(max_length=20, null=True, blank=True)
 	last_name                       = models.CharField(max_length=200)
-	userId                          = models.CharField(max_length=13, unique=True, blank=True, null=True)
+	# userId                          = models.CharField(max_length=13, unique=True, blank=True, null=True)
 	email                           = models.EmailField(unique=True)
 	
 		
@@ -78,11 +78,11 @@ class User(AbstractBaseUser):
 
 
 
-def generate_userId():
-	getNum = ''.join(random.choice('0123456789') for i in range(10))
-	getAlpha = ''.join(random.choice('ABCEFGHIJKLMNOPQRSTUVWXYZ') for i in range(2))
-	getUserId = getAlpha + getNum
+# def generate_userId():
+# 	getNum = ''.join(random.choice('0123456789') for i in range(10))
+# 	getAlpha = ''.join(random.choice('ABCEFGHIJKLMNOPQRSTUVWXYZ') for i in range(2))
+# 	getUserId = getAlpha + getNum
 
-	while User.objects.filter(userId=getUserId).exists():
-		generate_userId()
-	return getUserId
+# 	while User.objects.filter(userId=getUserId).exists():
+# 		generate_userId()
+# 	return getUserId
