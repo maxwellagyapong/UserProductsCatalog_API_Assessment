@@ -128,8 +128,6 @@ class PasswordResetRequestView(generics.CreateAPIView):
     def post(self, request):
         email = request.data.get('email')
         user = User.objects.filter(email=email).first()
-        
-        reset_url = "127.0.0.1/api/account/reset-password/"
 
         if user:
             token = PasswordResetTokenGenerator().make_token(user)
