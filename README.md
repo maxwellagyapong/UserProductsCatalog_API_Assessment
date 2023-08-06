@@ -55,6 +55,8 @@ python manage.py migrate
 * /api/products/create - add a new product to a user's catalog
 * /api/account/register - register a new user account
 * /api/account/login - login to an existing user account
+* /api/account/logout - user logout
+* /api/account/password-reset - reset user password
 
 ## API Documentation
 ```
