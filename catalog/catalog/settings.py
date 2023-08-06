@@ -156,3 +156,10 @@ REDIS_PORT = '6379'
 BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0' 
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600} 
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+
+# Email configurations
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = '<YOUR_GMAIL_USERNAME>@gmail.com'
+EMAIL_HOST_PASSWORD = '<YOUR_GMAIL_PASSWORD>'
+EMAIL_PORT = 587
