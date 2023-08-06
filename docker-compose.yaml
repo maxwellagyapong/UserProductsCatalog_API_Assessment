@@ -4,11 +4,11 @@ services:
   web:
     image: python:3.11.2
     command: bash -c "pip install -r requirements.txt && python manage.py runserver 0.0.0.0:8000"
-    container_name: products_catalog
+    container_name: catalog
     ports:
       - "8000:8000"
     volumes:
-      - .:/products_catalog
+      - .:/catalog
     depends_on:
       - db
 
