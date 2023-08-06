@@ -8,6 +8,11 @@ from django.contrib import auth
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from .tasks import send_password_reset_email
 
 User = get_user_model()
 
@@ -112,3 +117,24 @@ class LogoutView(APIView):
 			"status":status.HTTP_200_OK,
 			"message":"Logged out"
 			}, status=status.HTTP_200_OK)
+  
+
+class PasswordResetView(APIView):
+    def post(self, request):
+        serializer = PasswordResetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({'detail': 'This email is not found on this platform.'}, status=status.HTTP_404_NOT_FOUND)
+
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        reset_url = f"127.0.0.1/api/account/reset-password/{uid}/{token}/"
+
+        send_password_reset_email.delay(email, reset_url)
+
+        return Response({'detail': 'Password reset email sent.'}, status=status.HTTP_200_OK)

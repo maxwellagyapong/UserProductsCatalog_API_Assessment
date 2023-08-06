@@ -56,7 +56,7 @@ python manage.py migrate
 * /api/account/register - register a new user account
 * /api/account/login - login to an existing user account
 * /api/account/logout - user logout
-* /api/account/password-reset - reset user password
+* /api/account/reset-password - reset user password
 
 ## API Documentation
 ```

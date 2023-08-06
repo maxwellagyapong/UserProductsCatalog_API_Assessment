@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     
     # third-party apps
     'rest_framework',
+    'django_celery_results'
 ]
 
 AUTH_USER_MODEL = "user_app.User"
