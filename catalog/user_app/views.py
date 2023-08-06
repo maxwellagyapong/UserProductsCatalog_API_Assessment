@@ -10,9 +10,11 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .tasks import send_password_reset_email
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -117,24 +119,47 @@ class LogoutView(APIView):
 			"status":status.HTTP_200_OK,
 			"message":"Logged out"
 			}, status=status.HTTP_200_OK)
-  
 
-class PasswordResetView(APIView):
+
+class PasswordResetRequestView(generics.CreateAPIView):
+    serializer_class = PasswordResetSerializer
+    permission_classes = [AllowAny]
+    
     def post(self, request):
-        serializer = PasswordResetSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        email = request.data.get('email')
+        user = User.objects.filter(email=email).first()
+        
+        reset_url = "127.0.0.1/api/account/reset-password/"
 
-        email = serializer.validated_data['email']
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return Response({'detail': 'This email is not found on this platform.'}, status=status.HTTP_404_NOT_FOUND)
+        if user:
+            token = PasswordResetTokenGenerator().make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            reset_url = reverse('password-reset-confirm', args=[uid, token])
+            send_password_reset_email.delay(user.email, reset_url)  # Send email asynchronously
+            return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-        reset_url = f"127.0.0.1/api/account/reset-password/{uid}/{token}/"
+class PasswordResetConfirmView(APIView):
+		permission_classes = [AllowAny]
 
-        send_password_reset_email.delay(email, reset_url)
+		def post(self, request, uidb64, token):
 
-        return Response({'detail': 'Password reset email sent.'}, status=status.HTTP_200_OK)
+			try:
+				uid = force_text(urlsafe_base64_decode(uidb64))
+				user = User.objects.get(pk=uid)
+			except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+				user = None
+
+			if user is not None and PasswordResetTokenGenerator().check_token(user, token):
+				serializer = PasswordResetConfirmSerializer(data=request.data)
+				serializer.is_valid(raise_exception=True)
+				
+				new_password = serializer.validated_data['new_password']
+				user.set_password(new_password)
+				user.save()
+				
+				return Response({'message': 'Password reset successful'}, status=status.HTTP_200_OK)
+
+			return Response({'error': 'Invalid reset link'}, status=status.HTTP_400_BAD_REQUEST)
