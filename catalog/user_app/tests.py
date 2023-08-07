@@ -54,7 +54,7 @@ class LogoutTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.token)
         response = self.client.get(reverse("logout"))
         
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         
     def test_logout_authorized(self):
         pass
