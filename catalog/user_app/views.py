@@ -132,7 +132,8 @@ class PasswordResetRequestView(generics.CreateAPIView):
         if user:
             token = PasswordResetTokenGenerator().make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            reset_url = 'http://127.0.0.1:800%s'%reverse('password-reset-confirm', args=[uid, token])
+            reset_url = 'http://127.0.0.1:8000%s' %reverse('password-reset-confirm', args=[uid, token])
+            print(reset_url) # Just to get reset link on console
 
             send_password_reset_email.delay(user.email, reset_url)  # Send email asynchronously
             return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
