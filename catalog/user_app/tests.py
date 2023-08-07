@@ -19,7 +19,7 @@ class RegisterTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         
 
-class LoginLogoutTestCase(APITestCase):
+class LoginTestCase(APITestCase):
     
     def setUp(self):
         self.user = User.objects.create_user(email="test@gmail.com", first_name="test",
@@ -35,5 +35,26 @@ class LoginLogoutTestCase(APITestCase):
         response = self.client.post(reverse("login"), data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-    def test_logout(self):
+class LogoutTestCase(APITestCase):
+    
+    def setUp(self):
+        self.user = User.objects.create_user(email="test@gmail.com", first_name="test",
+                                        last_name="case", password="Password@123",)
+        
+        data = {
+            "email": "test@gmail.com",
+            "password": "Password@123"
+        }
+        
+        self.response = self.client.post(reverse("login"), data)
+         
+    def test_logout_unauthorized(self):
+                           
+        print(self.token)
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.token)
+        response = self.client.get(reverse("logout"))
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+    def test_logout_authorized(self):
         pass
