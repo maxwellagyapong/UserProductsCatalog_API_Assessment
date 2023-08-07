@@ -60,5 +60,5 @@ python manage.py migrate
 
 ## API Documentation
 ```
-http://127.0.0.1:8000/api/doc
+https://documenter.getpostman.com/view/20490236/2s9XxzuCTy
 ```
