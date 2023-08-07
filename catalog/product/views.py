@@ -3,11 +3,13 @@ from .models import Product
 from .serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
 # from .permissions import IsProductOwnerOrReadOnly
+from .paginations import ProductListPagination
 
 class ProductList(generics.ListAPIView):
     # queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = ProductListPagination
     
     def get_queryset(self):
         
